@@ -1,0 +1,126 @@
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+
+<script>
+    //INSTRUCCIONES
+    // Cambiar el bucket por el de tu cuenta en variable bucket
+    // Sustituir cliendId por el requerido buscarlo en https://console.cloud.google.com/apis/credentials -> IDs de cliente de OAuth 2.0
+
+    var bucket = "gnp-memoriainstitucional-qa.appspot.com";
+    var clientId = "969061699495-k5njcr2ot7pl15qo6k1qufvu887go2k0.apps.googleusercontent.com";
+    var backendUrl = "http://localhost:5000/bucket";
+
+
+    async function execute() {
+
+        // $.ajax({
+        //     type: "POST",
+        //     contentType: "application/json",
+        //     url: backendUrl,
+        //     data: { "prefix": "", "delimiter": "/" },
+        //     dataType: "json"
+        // }).then((respuesta) => {
+        //     console.log("OK respondio", respueta)
+        // });
+
+
+        $.post(backendUrl, { "prefix": "", "delimiter": "/" }, function (data) {
+            $(".result").html(data);
+        });
+
+    }
+
+    async function getFolderLevel(prefix) {
+        let archivos = await gapi.client.storage.objects.list(
+            {
+                "bucket": bucket,
+                "prefix": prefix,
+                "delimiter": "/"
+            })
+
+        if (archivos.result) {
+            numFolders = archivos.result.prefixes ? archivos.result.prefixes.length : 0;
+            numFiles = archivos.result.items ? archivos.result.items.length : 0;
+            console.log("Resultado de operacion", archivos)
+            let message = `Solicitud regresó -  Directorios : ${numFolders}, archivos: ${numFiles}.`
+            $(".info-request").html(message);
+            $(".directory").append(`<hr>`);
+            addFoldersAndFiles(archivos.result);
+
+            console.log("no. archivos: ", numFiles)
+            if (numFiles == 1000) {
+                token = archivos.result.nextPageToken;
+                console.log("nextPageToken:", archivos.result.nextPageToken);
+                $(".directory").append(`<hr> <button onclick="goToNextPage('${token}')" style='background: #82ccdd'>3) Ir a la siguiente página</button>`);
+            }
+        }
+    }
+
+    async function addFoldersAndFiles(filesAndFolders) {
+        if (filesAndFolders.items) {
+            for (item of filesAndFolders.items) {
+                if (item.size == 0) {
+                    //la llamada a una carpeta vacia trae la carpeta como archivo, por eso se descarta cuando es 0
+                    continue;
+                }
+                console.log("archivo", item);
+                $(".directory").append(`<button style="background: #ffb999">${item.name}</button>`);
+            }
+        }
+
+        if (filesAndFolders.prefixes) {
+            for (prefix of filesAndFolders.prefixes) {
+                $(".directory").append(`<button onclick="getFolderLevel('${prefix}')">${prefix}</button>`);
+
+            }
+        }
+    }
+
+    // llamar siguiente pagina
+    async function goToNextPage(nextPagetoken) {
+        console.log("Esta es la sig página");
+        let archivos = await gapi.client.storage.objects.list(
+            {
+                "bucket": bucket,
+                "delimiter": "/",
+                "prefix": "GMM/Test/Files/",
+                "nextPageToken": nextPagetoken
+            })
+
+        console.log("archivos: ", archivos);
+        if (archivos.result) {
+            listObjectsNextPage(archivos.result);
+        } else {
+            console.log("No hay más datos qué mostrar dentro del bucket");
+        }
+
+
+    }
+
+
+    async function listObjectsNextPage(filesAndFolders) {
+        if (filesAndFolders.items) {
+            for (item of filesAndFolders.items) {
+                if (item.size == 0) {
+                    //la llamada a una carpeta vacia trae la carpeta como archivo, por eso se descarta cuando es 0
+                    continue;
+                }
+                //console.log("archivo", item);
+                $(".directory").append(`<button style="background: #ffb999">${item.name}</button>`);
+            }
+        }
+    }
+
+    // mostrar los archivos de la carpeta solicitada
+
+</script>
+
+<!--____________HTML AQUÍ_______________-->
+
+<button onclick="authenticate().then(loadClient)">1) Autorizar y cargar</button>
+<button onclick="execute()">2) Ejecutar</button>
+<span class="info-request" style="background: royalblue; color: white"></span>
+<hr>
+
+
+<div class="directory"></div>

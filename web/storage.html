@@ -1,0 +1,41 @@
+<h5>Cargador de archivo</h5>
+
+<input type="file" id="archivo" />
+
+<button onclick="uploadSimpleFile()"> Subir archivo</button>
+
+
+<script>
+    function uploadSimpleFile() {
+        //var archivo = document.getElementById("archivo")
+        const file = archivo.files[0]; // 'archivo' es el id del input, es la forma facil de hacer getElementById
+        if (!file) {
+            alert("Selecciona un archivo para continuar");
+            return
+        }
+
+        console.log("Iniciando carga de archivo", file);
+
+        var formData = new FormData(); // FormData es la interfaz para enviar archivos, cada archivo se tiene que agregar con append
+        formData.append("archivo", file); // funciona con clave valor, archivo es el nombre y file es el adjunto
+
+
+        var xhr = new XMLHttpRequest();  // Se inicia una petición
+        xhr.open('POST', "http://localhost:5000/uploadFile", true); // Se hace el post 
+        xhr.send(formData);
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === xhr.DONE) {
+                console.log("termino la carga", xhr.response)
+            }else{
+                console.log("xhr.readyState", xhr.readyState);
+            }
+        }
+
+        xhr.onprogress = (e) =>{
+            console.log(e);
+        }
+
+    }
+
+</script>

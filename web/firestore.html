@@ -1,0 +1,75 @@
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase-firestore.js"></script>
+
+<input id="nombre" type="text" placeholder="nombre">
+<input id="apellido" type="text" placeholder="apellido">
+<input id="nacimiento" type="text" placeholder="nacimiento">
+
+<button onclick="saveFirestore()">Agregar</button>
+<br>
+<br>
+<div id="dataUser"></div>
+
+<script>
+
+    firebase.initializeApp({
+        apiKey: "AIzaSyC-aonoHl_v-pAEqh2dt_gTq4oA77sAuIM",
+        authDomain: "adamo-test-1.firebaseapp.com",
+        projectId: "adamo-test-1",
+    });
+
+    var db = firebase.firestore();
+
+    var usersRef = db.collection("users");
+
+
+    async function saveFirestore() {
+        var user = { nombre: nombre.value, apellido: apellido.value, nacimiento: nacimiento.value };
+
+        docRef = await usersRef.add(user);
+        console.log("Document written with ID: ", docRef.id);
+        console.log(user);
+    }
+
+
+    //get para obtener una vista
+    usersRef.onSnapshot((querySnapshot) => {
+        var html = ""
+        querySnapshot.forEach((doc) => {
+            const users = doc.data();
+            const id = doc.id;
+            html += `<div>[${id}] ${users.nombre} ${users.apellido} ${users.nacimiento} <div>`
+            console.log(users);
+        });
+        document.getElementById("dataUser").innerHTML = html;
+    })
+
+    db.collection("users").doc("OiHeSB8Xe719zGWJMOJP").get()
+        .then((resultado) => {
+            console.log("_____", resultado.data());
+        });
+
+
+    db.collection("users").doc("bIiA7jGEHOpgbuDix2vv").onSnapshot(snap => {
+        console.log("datos en tiempo real", snap.data());
+    })
+
+
+
+
+    // Ejercicio haz referencia a uno de tus documentos e imprime los datos utiliza doc
+
+    // Crea una colección con al menos 3 campos. 
+
+    // Revisa la documentación https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference#delete
+    // Elimina con el metodo delete
+
+    // como guardarias el siguiente objeto aditionalData = { nivel:"", nick:"", ocupacion:""}
+
+
+        // db.collection("users").doc("4uxtzz14dclKqLmw5C7y").get().then((snapshot) => {
+    //     console.log("ok", snapshot.data());
+    // })
+    db.collection("migraciones").add({tipo:1,nombre:true,clasificacion:{calve:"privada"}})
+
+</script>
