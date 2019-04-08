@@ -41,7 +41,7 @@ def subirArchivoWeb(file):
         bucket = client.get_bucket(my_bucket)
         bucket.blob(file.filename).upload_from_file(file)
 
-def consultarArchivos(prefix,delimiter):
+def consultarArchivos(prefix, delimiter):
         bucket = client.get_bucket(my_bucket)
         files = bucket.list_blobs(prefix=prefix, delimiter=delimiter)
 

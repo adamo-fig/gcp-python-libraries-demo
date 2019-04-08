@@ -12,6 +12,9 @@
 
 
     async function execute() {
+        $.get(backendUrl + `?{delimiter=/}`, function (response) {
+            console.log("Response", response)
+        })
 
         // $.ajax({
         //     type: "POST",

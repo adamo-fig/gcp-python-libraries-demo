@@ -4,10 +4,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-import storage.storage as storage
-import firestore.fire as firestore
-
-firestore.monitoreoDatos()
+import storage_pkg.storage as storage
+import firestore_pkg.firestorep as firestore
 
 @app.route("/")
 def holaMundo():
@@ -23,7 +21,6 @@ def jsonPost():
     data = request.json
     print(data["valor"])
     print(data["valor2"])
-
     return "Ok ..."
 
 @app.route("/uploadFile", methods=["POST"])
@@ -39,6 +36,11 @@ def consultarArchivos():
     # data = request.json
     # storage.consultarArchivos(data["prefix"], data["delimiter"])
     return jsonify({"response":"ok"})
+
+
+@app.route("/monitorData")
+def iniciarMonitoreo():
+    firestore.monitoreoDatos()
 
 
 
