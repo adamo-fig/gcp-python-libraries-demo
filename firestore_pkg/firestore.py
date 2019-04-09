@@ -19,3 +19,5 @@ def monitoreoDatos():
     db = firestore.Client()
     db.collection("usuarios").on_snapshot(mostrarCambios)
 
+
+# Ejercicios el storage le falta la metadata fecha y otros. revisa la documentación para ver que le puedes sacar

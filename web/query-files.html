@@ -1,62 +1,48 @@
+<button onclick="execute()">Iniciar Sistema de almacenamiento</button>
+<span class="info-request" style="background: royalblue; color: white"></span>
+<hr>
+
+<div class="directory"></div>
+
 <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
 <script src="https://apis.google.com/js/api.js"></script>
 
 <script>
     //INSTRUCCIONES
-    // Cambiar el bucket por el de tu cuenta en variable bucket
-    // Sustituir cliendId por el requerido buscarlo en https://console.cloud.google.com/apis/credentials -> IDs de cliente de OAuth 2.0
 
-    var bucket = "gnp-memoriainstitucional-qa.appspot.com";
-    var clientId = "969061699495-k5njcr2ot7pl15qo6k1qufvu887go2k0.apps.googleusercontent.com";
     var backendUrl = "http://localhost:5000/bucket";
 
 
     async function execute() {
-        $.get(backendUrl + `?{delimiter=/}`, function (response) {
+        $.get(backendUrl + `?delimiter=/`, function (response) {
+            addFoldersAndFiles(response)
             console.log("Response", response)
         })
-
-        // $.ajax({
-        //     type: "POST",
-        //     contentType: "application/json",
-        //     url: backendUrl,
-        //     data: { "prefix": "", "delimiter": "/" },
-        //     dataType: "json"
-        // }).then((respuesta) => {
-        //     console.log("OK respondio", respueta)
-        // });
-
-
-        $.post(backendUrl, { "prefix": "", "delimiter": "/" }, function (data) {
-            $(".result").html(data);
-        });
 
     }
 
     async function getFolderLevel(prefix) {
-        let archivos = await gapi.client.storage.objects.list(
-            {
-                "bucket": bucket,
-                "prefix": prefix,
-                "delimiter": "/"
-            })
 
-        if (archivos.result) {
-            numFolders = archivos.result.prefixes ? archivos.result.prefixes.length : 0;
-            numFiles = archivos.result.items ? archivos.result.items.length : 0;
-            console.log("Resultado de operacion", archivos)
+        $.get(backendUrl + `?delimiter=/&prefix=${prefix}`, function (response) {
+            console.log("Resultado de operacion", response)
+
+            if (response) {
+            numFolders = response.prefixes ? response.prefixes.length : 0;
+            numFiles = response.items ? response.items.length : 0;
             let message = `Solicitud regresó -  Directorios : ${numFolders}, archivos: ${numFiles}.`
             $(".info-request").html(message);
             $(".directory").append(`<hr>`);
-            addFoldersAndFiles(archivos.result);
+            addFoldersAndFiles(response);
 
             console.log("no. archivos: ", numFiles)
             if (numFiles == 1000) {
-                token = archivos.result.nextPageToken;
-                console.log("nextPageToken:", archivos.result.nextPageToken);
+                token = response.nextPageToken;
+                console.log("nextPageToken:", response.nextPageToken);
                 $(".directory").append(`<hr> <button onclick="goToNextPage('${token}')" style='background: #82ccdd'>3) Ir a la siguiente página</button>`);
             }
         }
+        })
+
     }
 
     async function addFoldersAndFiles(filesAndFolders) {
@@ -97,7 +83,6 @@
             console.log("No hay más datos qué mostrar dentro del bucket");
         }
 
-
     }
 
 
@@ -117,13 +102,3 @@
     // mostrar los archivos de la carpeta solicitada
 
 </script>
-
-<!--____________HTML AQUÍ_______________-->
-
-<button onclick="authenticate().then(loadClient)">1) Autorizar y cargar</button>
-<button onclick="execute()">2) Ejecutar</button>
-<span class="info-request" style="background: royalblue; color: white"></span>
-<hr>
-
-
-<div class="directory"></div>
