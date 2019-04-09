@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+import main
+
 app = Flask(__name__)
 CORS(app)
 
@@ -9,7 +11,11 @@ import firestore_pkg.firestorep as firestore
 
 @app.route("/")
 def holaMundo():
-    return "Hola Mundo"
+    return main.holaMundo(request)
+
+@app.route("/testQueryParam")
+def testQueryParam():
+    return main.testQueryParam(request)
 
 @app.route("/json")
 def json():
