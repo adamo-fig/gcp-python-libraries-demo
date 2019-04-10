@@ -41,13 +41,9 @@ def uploadFile():
     return jsonify({"response": "ok"})
 
 
-@app.route("/bucket")
+@app.route("/consultarArchivos")
 def consultarArchivos():
-    prefix = request.args.get("prefix")
-    delimiter = request.args.get("delimiter")
-    print("Parametros -> prefix:", prefix,  " delimitador:",  delimiter)
-    result_files = storage.consultarArchivos(prefix, delimiter)
-    return jsonify(result_files)
+    return main.consultarArchivos(request)
 
 
 @app.route("/monitorData")

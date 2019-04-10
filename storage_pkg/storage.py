@@ -2,9 +2,7 @@ from google.cloud import storage
 from google.cloud.storage import Client
 
 # Cambia aqui por el nombre de tu bucket
-# my_bucket = "qwiklabs-gcp-70a66879a9535fca"
-my_bucket = "buho-platform.appspot.com"
-
+my_bucket = "queiw-ladb-adamo"
 
 
 # Obtiene un cliente de conexión
@@ -75,4 +73,4 @@ def consultarArchivos(prefix, delimiter):
 
 # listarBuckets()
 # crearBucket()
-# subirVarios()
+subirVarios()
