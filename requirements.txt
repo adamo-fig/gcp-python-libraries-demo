@@ -1,5 +1,6 @@
 google-cloud-storage
 google-cloud-firestore
 grpcio 
+google-cloud-pubsub
 flask
 flask-cors

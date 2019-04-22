@@ -73,4 +73,4 @@ def consultarArchivos(prefix, delimiter):
 
 # listarBuckets()
 # crearBucket()
-subirVarios()
+# subirVarios()
