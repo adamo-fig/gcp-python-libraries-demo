@@ -97,5 +97,5 @@ def receive_messages(project_id, subscription_name):
 
 # create_topic("buho-platform","myTopic")
 
-# publish_messages("buho-platform","myTopic")
-receive_messages("buho-platform","mySubscription")
+publish_messages("qwiklabs-gcp-0ba58ec53379f900","emeTopic")
+# receive_messages("qwiklabs-gcp-0ba58ec53379f900","mysubAdamo")
